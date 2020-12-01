@@ -1,33 +1,21 @@
 #!/usr/bin/env perl
 
 use v5.32;
+use experimental 'signatures';
 
-my @n = map { int } <DATA>;
+sub solve ($factors, $sum, @numbers) {
+  my @vars = map { qq[\$i$_] } 1..$factors;
+  my $code = q[ return ( ].join('*',@vars) . q[ ) if ] . join("+", @vars) . q[ == ] . $sum;
+  $code =   qq[ for my $_ (\@numbers) { $code } ] for (@vars);
+  $code .=   q[ die q(didnt find sum=$sum) ];
+  return eval $code;
+}
 
-my $answer1 = sub {
-  for my $a (@n) {
-    for my $b (@n) {
-      if ($a+$b == 2020) {
-        return ($a*$b);
-      }
-    }
-  }
-};
+my @numbers = map { int } <DATA>;
 
-my $answer2 = sub {
-  for my $a (@n) {
-    for my $b (@n) {
-      for my $c (@n) {
-        if ($a+$b+$c == 2020) {
-          return ($a*$b*$c);
-        }
-      }
-    }
-  }
-};
-
-say $answer1->();
-say $answer2->();
+for (2..3) {
+  say qq[number for $_ factors: ], solve($_, 2020, @numbers);
+}
 
 __DATA__
 1822
