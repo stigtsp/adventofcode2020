@@ -1,20 +1,20 @@
 #!/usr/bin/env perl
 
-use v5.32;
-use experimental 'signatures';
-
-sub solve ($factors, $sum, @numbers) {
-  my @vars = map { qq[\$i$_] } 1..$factors;
-  my $code = q[ return ( ].join('*',@vars) . q[ ) if ] . join("+", @vars) . q[ == ] . $sum;
-  $code =   qq[ for my $_ (\@numbers) { $code } ] for (@vars);
-  $code .=   q[ die q(didnt find sum=$sum) ];
-  return eval $code;
-}
+use strict;
+use feature qw(say);
+use experimental qw(signatures);
 
 my @numbers = map { int } <DATA>;
 
 for (2..3) {
-  say qq[number for $_ factors: ], solve($_, 2020, @numbers);
+  say qq(factors $_, product = ), solve($_, 2020, @numbers);
+}
+
+sub solve ($factors, $sum, @numbers) {
+  my @vars = map { "\$i$_" } 1 .. $factors;
+  my $code = "return " . join("*", @vars) . " if " . join("+", @vars) . " == " . $sum;
+  $code    = "for my $_ (\@numbers) { $code }\n" for (@vars);
+  return eval $code;
 }
 
 __DATA__
