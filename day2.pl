@@ -4,18 +4,11 @@ use strict;
 use v5.32;
 
 my ($valid1, $valid2);
-while (<DATA> =~ m/(\d+)-(\d+) ([a-z]): ([a-z]+)/) {
-  my ($a, $b, $char, $pw) = ($1, $2, $3, $4);
-
-  my $num =()= $pw =~ /$char/g;
-  $valid1++ if $a <= $num <= $b;
-
-  my @pw = split('', " $pw");
-  $valid2++ if (($pw[$a] eq $char) + ($pw[$b] eq $char)) == 1;
-
+while ( my ($a, $b, $char, $pw) = <DATA> =~ m/(\d+)-(\d+) ([a-z]): ([a-z]+)/ ) {
+  $valid1++ if $a <= (()= $pw =~ /$char/g) <= $b;
+  $valid2++ if (grep(/$char/, @{[split('', " $pw")]}[$a,$b])) == 1;
 }
-say "There are $valid1 valid passwords for rule 1";
-say "There are $valid2 valid passwords for rule 2";
+say "There are $valid1 valid passwords for rule 1, and $valid2 for rule 2";
 
 __DATA__
 1-13 r: gqdrspndrpsrjfjx
